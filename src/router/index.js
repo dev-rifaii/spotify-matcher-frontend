@@ -61,7 +61,9 @@ const routes = [
         path: '/login',
         beforeEnter(to, from, next) {
             async function getUrl() {
-                return await axios.get("http://localhost:8080/spotifymatcher/authentication/url", {
+                // return await axios.get("http://localhost:8080/spotifymatcher/authentication/url", {
+                    return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/url`, {
+
                     headers: {
                         baseRoute: window.location.origin
                     }
@@ -91,7 +93,7 @@ const routes = [
 function getToken(code) {
 
     async function requestToken() {
-        return await axios.get('http://localhost:8080/spotifymatcher/authentication/token', {
+        return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/token`, {
             headers: {
                 code: code,
                 baseRoute: window.location.origin
@@ -149,7 +151,7 @@ export class Util {
         const rt = JSON.parse(localStorage.getItem("token"));
         const refreshToken = rt.refresh_token;
         async function requestToken() {
-            return await axios.get('http://localhost:8080/spotifymatcher/authentication/refresh', {
+            return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/refresh`, {
                 headers: {
                     refreshToken: refreshToken
                 }

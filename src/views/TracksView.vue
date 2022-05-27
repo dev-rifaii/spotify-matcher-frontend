@@ -25,7 +25,7 @@ export default {
 
     try {
       const res = await axios.get(
-        "http://localhost:8080/spotifymatcher/users/tracks",
+        `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/tracks`,
         {
           headers: { token: token.access_token },
         }

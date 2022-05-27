@@ -25,7 +25,7 @@ export default {
     Util.refreshIfExpired(token);
     try {
       const res = await axios.get(
-        "http://localhost:8080/spotifymatcher/users/profile",
+        `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/profile`,
         {
           headers: { token: token.access_token },
         }

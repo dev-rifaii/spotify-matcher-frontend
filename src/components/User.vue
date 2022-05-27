@@ -56,7 +56,7 @@ export default {
       Util.refreshIfExpired(token);
 
       axios
-        .post("http://localhost:8080/spotifymatcher/users/bio", this.bid, {
+        .post(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/bio`, this.bid, {
           headers: { token: token.access_token },
         })
         .then(() => 

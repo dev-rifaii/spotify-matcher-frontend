@@ -19,7 +19,9 @@ export default {
   components: {
     Header,
     Footer,
-  },
+  },mounted(){
+    console.log("Backend root url = " + process.env.VUE_APP_BACKEND_ROOT_URL)
+  }
 };
 </script>
 
