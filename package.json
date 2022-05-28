@@ -5,9 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --skip-plugins @vue/cli-plugin-eslint",
-    "lint": "vue-cli-service lint",
-    "postinstall": "npm run build",
-    "start": "node server.js"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "autoprefixer": "10.4.5",
