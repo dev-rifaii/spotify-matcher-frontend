@@ -61,11 +61,11 @@ const routes = [
         path: '/login',
         beforeEnter(to, from, next) {
             async function getUrl() {
+                let curr = window.location.href.substring(0,window.location.href.length-1)
                 // return await axios.get("http://localhost:8080/spotifymatcher/authentication/url", {
                     return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/url`, {
-
                     headers: {
-                        baseRoute: window.location.origin
+                        baseRoute: curr
                     }
                 })
             }
