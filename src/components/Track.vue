@@ -1,8 +1,4 @@
 <template>
-  <!-- <div class="card">
-    <a :href="track.href + track.id">{{ track.name }}</a>
-    <img :src="track.imageUrl" width="100" height="100" />
-  </div> -->
   <div class="card" style="width: 10rem">
     <img
       :src="track.imageUrl"

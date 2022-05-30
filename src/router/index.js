@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { useRoute } from 'vue-router';
 import ProfileView from "../views/ProfileView";
 import Home from "../views/Home";
@@ -11,7 +11,7 @@ import Error from "../views/Error";
 const axios = require('axios');
 const route = useRoute();
 
-const noAuthRoutes = ['/', '/login', '/callback','/error'];
+const noAuthRoutes = ['/', '/login', '/callback', '/error', '/about'];
 
 
 const routes = [
@@ -61,11 +61,9 @@ const routes = [
         path: '/login',
         beforeEnter(to, from, next) {
             async function getUrl() {
-                let curr = window.location.href.substring(0,window.location.href.length-1)
-                // return await axios.get("http://localhost:8080/spotifymatcher/authentication/url", {
-                    return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/url`, {
+                return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/url`, {
                     headers: {
-                        baseRoute: curr
+                        baseRoute: process.env.VUE_APP_ORIGIN
                     }
                 })
             }
@@ -96,7 +94,7 @@ function getToken(code) {
         return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/token`, {
             headers: {
                 code: code,
-                baseRoute: window.location.origin
+                baseRoute: process.env.VUE_APP_ORIGIN
             }
         }).catch(function (error) {
             return error.response;
@@ -107,16 +105,25 @@ function getToken(code) {
         const token = await requestToken();
         if (token.status === 400) {
             //handle error
+            console.log("Error getting token")
         }
         else {
             const now = new Date()
-            console.log(now.getTime());
+            persistUser(token.data.access_token);
+
             localStorage.setItem("token", JSON.stringify(token.data));
         }
     }
     useToken();
 }
 
+function persistUser(token) {
+    axios.post(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/persist`, null, {
+        headers: {
+            token: token
+        }
+    })
+}
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
@@ -125,13 +132,9 @@ const router = createRouter({
 
 
 router.beforeEach((to, from) => {
-
-
     if (tokenExists() || noAuthRoutes.includes(to.path)) {
-
         return true;
     }
-
     return false;
 
 })
@@ -144,10 +147,7 @@ function tokenExists() {
 
 export class Util {
 
-
     static refreshToken() {
-        console.log("expired")
-
         const rt = JSON.parse(localStorage.getItem("token"));
         const refreshToken = rt.refresh_token;
         async function requestToken() {
@@ -184,5 +184,7 @@ export class Util {
 
 
 }
+
+
 export default router
 

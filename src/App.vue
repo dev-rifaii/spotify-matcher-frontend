@@ -2,9 +2,7 @@
   <div class="container">
     <Header />
     <router-view> </router-view>
-
     <body>
-      <!-- <router-link v-if="this.$route.path == '/'" to="/home">Home</router-link> -->
     </body>
     <Footer />
   </div>
@@ -19,9 +17,7 @@ export default {
   components: {
     Header,
     Footer,
-  },mounted(){
-    console.log("Backend root url = " + process.env.VUE_APP_BACKEND_ROOT_URL)
-  }
+  },
 };
 </script>
 

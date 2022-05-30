@@ -9,12 +9,6 @@
       color="green"
       route="login"
     />
-    <!-- <Button
-      v-if="this.$route.path == '/'"
-      text="Refresh"
-      color="blue"
-      route="refresh"
-    /> -->
   </body>
 </template>
 

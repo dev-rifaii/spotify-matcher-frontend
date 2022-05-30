@@ -1,5 +1,5 @@
 <template>
-    <p> About </p>
+    <p> Website is still under developement by <a href = https://github.com/dev-rifaii/>dev-rifaii</a> </p>
 </template>
 
 <script>

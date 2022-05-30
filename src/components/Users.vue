@@ -1,8 +1,4 @@
 <template>
-  <!-- <div :key="user.id" v-for="user in users">
-    <User :user="user" />
-  </div> -->
-
   <div class="row row-cols-1 row-cols-md-3">
     <div :key="user.id" v-for="user in users">
       <div class="col mb-4">
