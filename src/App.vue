@@ -2,10 +2,9 @@
   <div class="container">
     <Header />
     <router-view> </router-view>
-    <body>
-    </body>
-    <Footer />
+    <body></body>
   </div>
+  <Footer />
 </template> 
 
 <script>

@@ -1,5 +1,6 @@
 <template>
-      <router-link to="/about">About</router-link>
+
+      <router-link class="about" to="/about">About</router-link>
 
 
 </template>
@@ -10,3 +11,12 @@ export default {
 }
 
 </script>
+
+<style>
+.about{
+  position: relative;
+  left: 50%;
+  bottom: 40px;
+  text-decoration:none;
+}
+</style>
