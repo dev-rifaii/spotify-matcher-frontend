@@ -23,7 +23,7 @@
         v-if="this.$route.path == '/profile'"
       />
       <br />
-      <button v-if="this.$route.path == '/profile'" type="button" @click="setBio()" class="btn">Set Bio</button>
+      <button v-if="this.$route.path == '/profile'" type="button" @click="setBio()" class="btn setBio" >Set Bio</button>
       <label v-if="enough == true">Minimum 20 characters</label>
     </div>
   </div>
@@ -76,7 +76,7 @@ export default {
 </script>
 
 <style>
-.btn{
+.setBio{
   padding: 15px 96px;
 }
 </style>

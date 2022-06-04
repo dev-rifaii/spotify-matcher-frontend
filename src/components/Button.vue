@@ -3,8 +3,9 @@
     @click="$router.push(route)"
     :style="{
       background: color,
+      padding: size,
     }"
-    class="btn"
+    class="btn customButton"
   >
     {{ text }}
   </button>
@@ -17,6 +18,7 @@ export default {
     text: String,
     color: String,
     route: String,
+    size: String,
   },
   methods: {
     onClick() {},

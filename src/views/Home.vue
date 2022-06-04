@@ -1,14 +1,15 @@
 <template>
-  <router-link to="/profile">Profile|</router-link>
-  <router-link to="/tracks">Tracks|</router-link>
-  <router-link to="/matches">Matches</router-link>
-  <br />
-  <Button text="match" route="matcher" />
+  <div class="buttonsContainer">
+    <Button text="profile" color="green"  route="profile" />
+    <Button text="tracks" color="green" route="tracks" />
+    <Button text="matches" color="green" route="matches" />
+    <br />
+    <Button style="matchButton" size="15px 125px" text="match" route="matcher" />
+  </div>
 
   <div v-if="currentPage == 'profile'">
     <profile-view></profile-view>
   </div>
-
 </template>
 
 
@@ -16,7 +17,7 @@
 import Button from "../components/Button.vue";
 export default {
   name: "Home",
-    data() {
+  data() {
     return {
       currentPage: "home",
     };
@@ -26,3 +27,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.buttonsContainer {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+</style>
