@@ -33,5 +33,7 @@ export default {
   margin: auto;
   width: 50%;
   padding: 10px;
+  position: relative;
+  left: 90px;
 }
 </style>

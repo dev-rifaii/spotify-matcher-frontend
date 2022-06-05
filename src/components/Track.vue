@@ -10,7 +10,7 @@
       height="100"
     />
     <div class="card-body">
-      <a :href="track.href">{{ track.name }}</a>
+      <a :href="track.href" style="text-decoration: none">{{ track.name }}</a>
     </div>
   </div>
 </template>
