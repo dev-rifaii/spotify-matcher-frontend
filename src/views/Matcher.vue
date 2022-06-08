@@ -31,8 +31,15 @@ export default {
       );
       this.users = res.data;
     } catch (e) {
-      this.$router.push("error");
-      console.error(e);
+      // console.log("response = " + e.reponse())
+      if (e.response.status == 401) {
+        this.$router.push({
+          name: "Error",
+          params: { message: "You need to link your socials in biography before trying to match." },
+        });
+      } else {
+        this.$router.push("error");
+      }
     }
   },
 };
