@@ -66,11 +66,18 @@ const routes = [
                     headers: {
                         baseRoute: process.env.VUE_APP_ORIGIN
                     }
+                }).catch(function (error) {
+                    router.push({
+                        name: "Error",
+                        params: { message: "Server is down" },
+                    });
                 })
             }
             async function useUrl() {
                 const url = await getUrl();
-                window.location.replace(url.data);
+                if (url != null) {
+                    window.location.replace(url.data);
+                }
             }
             useUrl();
         }
@@ -81,7 +88,11 @@ const routes = [
             let urlParams = new URLSearchParams(window.location.search);
             let cd = urlParams.get('code');
             getToken(cd);
-            router.push('/home')
+            if (!tokenExists()) {
+                setTimeout(function () { router.push('/home'); }, 2000);
+            } else {
+                router.push('/home')
+            }
         }
     },
 
@@ -97,16 +108,19 @@ function getToken(code) {
                 code: code,
                 baseRoute: process.env.VUE_APP_ORIGIN
             }
-        }).catch(function (error) {
-            return error.response;
         })
+            .catch(function (error) {
+                return error.response;
+            })
     }
 
     async function useToken() {
         const token = await requestToken();
         if (token.status === 400) {
-            //handle error
-            console.log("Error getting token")
+            router.push({
+                name: "Error",
+                params: { message: "There was a problem logging in." },
+            });
         }
         else {
             const now = new Date()

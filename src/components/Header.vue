@@ -1,7 +1,7 @@
 <template>
   <header>
     <h1>Spotify Matcher</h1>
-    <AuthenticatedPrev />
+    <AuthenticatedPrev v-if="tokenExists() == true" />
   </header>
   <body>
     <div>
@@ -26,10 +26,13 @@ export default {
     Button,
     AuthenticatedPrev,
   },
+  methods: {
+    tokenExists() {
+      return localStorage.getItem("token") != null;
+    },
+  },
 };
 
-methods: {
-}
 </script>
 
 
@@ -40,5 +43,4 @@ header {
   align-items: center;
   margin-bottom: 20px;
 }
-
 </style>

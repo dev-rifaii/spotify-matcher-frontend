@@ -23,7 +23,14 @@
         v-if="this.$route.path == '/profile'"
       />
       <br />
-      <button v-if="this.$route.path == '/profile'" type="button" @click="setBio()" class="btn setBio" >Set Bio</button>
+      <button
+        v-if="this.$route.path == '/profile'"
+        type="button"
+        @click="setBio()"
+        class="btn setBio"
+      >
+        Set Bio
+      </button>
       <label v-if="enough == true">Minimum 20 characters</label>
     </div>
   </div>
@@ -56,12 +63,17 @@ export default {
       Util.refreshIfExpired(token);
 
       axios
-        .post(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/bio`, this.bid, {
-          headers: { token: token.access_token },
-        })
-        .then(() => 
-        location.reload()
+        .post(
+          `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/bio`,
+          this.bid,
+          {
+            headers: {
+              "Content-Type": "text/plain",
+              token: token.access_token,
+            },
+          }
         )
+        .then(() => location.reload())
         .catch((error) => {
           if (error.response.status !== 200) {
             this.$router.push("error");
@@ -76,7 +88,7 @@ export default {
 </script>
 
 <style>
-.setBio{
+.setBio {
   padding: 15px 96px;
 }
 </style>
