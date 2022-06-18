@@ -1,6 +1,6 @@
 <template>
   <router-link class="about" to="/about">About</router-link>
-  <router-link class="about" to="/">  |  Login Page</router-link>
+  <router-link v-if="this.$route.path != '/'" class="about" to="/">  |  Login Page</router-link>
 </template>
 
 <script>
