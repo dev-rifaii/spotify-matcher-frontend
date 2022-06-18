@@ -89,7 +89,7 @@ const routes = [
             let cd = urlParams.get('code');
             getToken(cd);
             if (!tokenExists()) {
-                setTimeout(function () { router.push('/home'); }, 2000);
+                setTimeout(function () { router.push('/home'); }, 1200);
             } else {
                 router.push('/home')
             }
@@ -147,7 +147,8 @@ const router = createRouter({
 
 
 router.beforeEach((to, from) => {
-    if (tokenExists() || noAuthRoutes.includes(to.path)) {
+
+    if (tokenExists() &&  tokenIsValid() || noAuthRoutes.includes(to.path) ) {
         return true;
     }
     return false;
@@ -157,6 +158,11 @@ router.beforeEach((to, from) => {
 
 function tokenExists() {
     return localStorage.getItem('token') != null
+}
+
+function tokenIsValid(){
+    const now = Date.now();
+   return JSON.parse(localStorage.getItem("token")).expires_at > now
 }
 
 

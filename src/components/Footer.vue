@@ -1,22 +1,19 @@
 <template>
-
-      <router-link class="about" to="/about">About</router-link>
-
-
+  <router-link class="about" to="/about">About</router-link>
+  <router-link class="about" to="/">  |  Login Page</router-link>
 </template>
 
 <script>
 export default {
-    name:"Footer"
-}
-
+  name: "Footer",
+};
 </script>
 
-<style>
-.about{
+<style scoped>
+.about {
   position: relative;
-  left: 50%;
+  left: 47%;
   bottom: 40px;
-  text-decoration:none;
+  text-decoration: none;
 }
 </style>
