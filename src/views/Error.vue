@@ -1,5 +1,5 @@
 <template>
-  <h1 class="error">Error</h1>
+  <h1>Error</h1>
   <p v-if="message != null">💥{{ message }}</p>
 </template>
 
@@ -11,9 +11,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.error{
-
-}
-</style>

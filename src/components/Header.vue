@@ -1,7 +1,7 @@
 <template>
   <header>
     <h1>Spotify Matcher</h1>
-    <AuthenticatedPrev v-if="tokenExists() == true" />
+    <AuthenticatedPrev v-if="tokenIsValid() == true" />
   </header>
   <body>
     <div>
@@ -27,12 +27,15 @@ export default {
     AuthenticatedPrev,
   },
   methods: {
-    tokenExists() {
-      return localStorage.getItem("token") != null;
+    tokenIsValid() {
+      const now = Date.now();
+      return (
+        localStorage.getItem("token") != null &&
+        JSON.parse(localStorage.getItem("token")).expires_at > now
+      );
     },
   },
 };
-
 </script>
 
 
