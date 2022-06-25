@@ -7,14 +7,21 @@ import Matches from "../views/Matches";
 import Matcher from "../views/Matcher";
 import About from "../views/About";
 import Error from "../views/Error";
+import Chat from "../views/Chat";
+
 
 const axios = require('axios');
 const route = useRoute();
 
-const noAuthRoutes = ['/', '/login', '/callback', '/error', '/about'];
+const noAuthRoutes = ['/', '/login', '/callback', '/error', '/about', '/chat'];
 
 
 const routes = [
+    {
+        path: '/chat',
+        name: 'Chat',
+        component: Chat,
+    },
     {
         path: '/error',
         name: 'Error',
@@ -88,6 +95,9 @@ const routes = [
             let urlParams = new URLSearchParams(window.location.search);
             let cd = urlParams.get('code');
             getToken(cd);
+            if (localStorage.getItem('id') == null) {
+                getUserSpotifyId();
+            }
             if (!tokenExists()) {
                 setTimeout(function () { router.push('/home'); }, 1200);
             } else {
@@ -98,6 +108,24 @@ const routes = [
 
 
 ]
+
+async function getUserSpotifyId() {
+    console.log("getUserSpotifyId invoked")
+    const token = JSON.parse(localStorage.getItem("token"));
+    try {
+        const res = await axios.get(
+            `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/profile`,
+            {
+                headers: { token: token.access_token },
+            }
+        );
+        localStorage.setItem('id', res.data.id);
+        // console.log(res.data)
+    } catch (e) {
+        this.$router.push('error');
+        console.error(e);
+    }
+}
 
 
 function getToken(code) {
@@ -148,7 +176,7 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
 
-    if (tokenExists() &&  tokenIsValid() || noAuthRoutes.includes(to.path) ) {
+    if (tokenExists() && tokenIsValid() || noAuthRoutes.includes(to.path)) {
         return true;
     }
     return false;
@@ -160,9 +188,9 @@ function tokenExists() {
     return localStorage.getItem('token') != null
 }
 
-function tokenIsValid(){
+function tokenIsValid() {
     const now = Date.now();
-   return JSON.parse(localStorage.getItem("token")).expires_at > now
+    return JSON.parse(localStorage.getItem("token")).expires_at > now
 }
 
 

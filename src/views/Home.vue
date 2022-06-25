@@ -1,10 +1,17 @@
 <template>
   <div class="buttonsContainer">
-    <Button text="profile" color="green"  route="profile" />
+    <Button text="profile" color="green" route="profile" />
     <Button text="tracks" color="green" route="tracks" />
     <Button text="matches" color="green" route="matches" />
+    <Button text="chat" color="green" route="chat" />
+
     <br />
-    <Button style="matchButton" size="15px 125px" text="match" route="matcher" />
+    <Button
+      style="matchButton"
+      size="15px 125px"
+      text="match"
+      route="matcher"
+    />
   </div>
 
   <div v-if="currentPage == 'profile'">
