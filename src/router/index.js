@@ -110,7 +110,6 @@ const routes = [
 ]
 
 async function getUserSpotifyId() {
-    console.log("getUserSpotifyId invoked")
     const token = JSON.parse(localStorage.getItem("token"));
     try {
         const res = await axios.get(
