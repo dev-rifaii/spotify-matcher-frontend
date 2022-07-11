@@ -7,7 +7,6 @@
 import axios from "axios";
 import Users from "../components/Users.vue";
 
-import { Util } from "../router/index";
 
 export default {
   name: "Matcher",
@@ -20,22 +19,24 @@ export default {
     };
   },
   async created() {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Util.refreshIfExpired(token);
+    let token = localStorage.getItem("jwt");
+    token = token.substring(1, token.length);
     try {
       const res = await axios.get(
         `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/match`,
         {
-          headers: { token: token.access_token },
+          headers: { jwt: token },
         }
       );
       this.users = res.data;
     } catch (e) {
-      // console.log("response = " + e.reponse())
       if (e.response.status == 401) {
         this.$router.push({
           name: "Error",
-          params: { message: "You need to link your socials in biography before trying to match." },
+          params: {
+            message:
+              "You need to link your socials in biography before trying to match.",
+          },
         });
       } else {
         this.$router.push("error");

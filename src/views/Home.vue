@@ -3,15 +3,8 @@
     <Button text="profile" color="green" route="profile" />
     <Button text="tracks" color="green" route="tracks" />
     <Button text="matches" color="green" route="matches" />
-    <Button text="chat" color="green" route="chat" />
-
-    <br />
-    <Button
-      style="matchButton"
-      size="15px 125px"
-      text="match"
-      route="matcher"
-    />
+    <Button width="28.6%" text="chat" color="green" route="chat" />
+    <Button width="100%" height="100%" text="match" route="matcher" />
   </div>
 
   <div v-if="currentPage == 'profile'">
@@ -39,7 +32,7 @@ export default {
 .buttonsContainer {
   margin: auto;
   width: 50%;
-  padding: 10px;
+  height: 80px;
   position: relative;
   left: 90px;
 }

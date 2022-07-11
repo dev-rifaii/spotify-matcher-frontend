@@ -6,7 +6,6 @@
 <script>
 import Users from "../components/Users.vue";
 import axios from "axios";
-import { Util } from "../router/index";
 
 export default {
   name: "Matches",
@@ -20,13 +19,13 @@ export default {
   },
 
   async created() {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Util.refreshIfExpired(token);
+        let token = localStorage.getItem("jwt");
+    token = token.substring(1, token.length);
     try {
       const res = await axios.get(
         `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/matches`,
         {
-          headers: { token: token.access_token },
+          headers: { jwt: token },
         }
       );
       this.users = res.data;

@@ -13,7 +13,7 @@ import Chat from "../views/Chat";
 const axios = require('axios');
 const route = useRoute();
 
-const noAuthRoutes = ['/', '/login', '/callback', '/error', '/about', '/chat'];
+const noAuthRoutes = ['/', '/login', '/callback', '/error', '/about'];
 
 
 const routes = [
@@ -91,15 +91,15 @@ const routes = [
     },
     {
         path: '/callback',
-        beforeEnter(to, from, next) {
+        async beforeEnter(to, from) {
             let urlParams = new URLSearchParams(window.location.search);
             let cd = urlParams.get('code');
-            getToken(cd);
-            if (localStorage.getItem('id') == null) {
-                getUserSpotifyId();
-            }
+            await getSpotifyToken(cd);
+            let id = await getUserSpotifyId();
+            await getJwt(id);
+
             if (!tokenExists()) {
-                setTimeout(function () { router.push('/home'); }, 1200);
+                setTimeout(function () { router.push('/home'); }, 2000);
             } else {
                 router.push('/home')
             }
@@ -113,21 +113,20 @@ async function getUserSpotifyId() {
     const token = JSON.parse(localStorage.getItem("token"));
     try {
         const res = await axios.get(
-            `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/profile`,
+            `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/id`,
             {
                 headers: { token: token.access_token },
             }
         );
-        localStorage.setItem('id', res.data.id);
-        // console.log(res.data)
+        return res.data;
     } catch (e) {
-        this.$router.push('error');
+        router.push('error');
         console.error(e);
     }
 }
 
 
-function getToken(code) {
+async function getSpotifyToken(code) {
 
     async function requestToken() {
         return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/token`, {
@@ -152,12 +151,40 @@ function getToken(code) {
         else {
             const now = new Date()
             persistUser(token.data.access_token);
-
             localStorage.setItem("token", JSON.stringify(token.data));
         }
     }
-    useToken();
+    await useToken();
 }
+
+async function getJwt(id) {
+    async function requestJwt() {
+        return await axios.get(`${process.env.VUE_APP_AUTH_SERVER_URL}/api/token`, {
+            headers: {
+                userId: id
+            }
+        })
+            .catch(function (error) {
+                return error.response;
+            })
+    }
+
+    async function useToken() {
+        const token = await requestJwt();
+        if (token.status === 400) {
+            router.push({
+                name: "Error",
+                params: { message: "There was a problem logging in." },
+            });
+        }
+        else {
+            localStorage.setItem("jwt", JSON.stringify(token.data));
+        }
+
+    }
+    await useToken();
+}
+
 
 function persistUser(token) {
     axios.post(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/persist`, null, {
@@ -190,47 +217,6 @@ function tokenExists() {
 function tokenIsValid() {
     const now = Date.now();
     return JSON.parse(localStorage.getItem("token")).expires_at > now
-}
-
-
-export class Util {
-
-    static refreshToken() {
-        const rt = JSON.parse(localStorage.getItem("token"));
-        const refreshToken = rt.refresh_token;
-        async function requestToken() {
-            return await axios.get(`${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/authentication/refresh`, {
-                headers: {
-                    refreshToken: refreshToken
-                }
-            }).catch(function (error) {
-                return error.response;
-            })
-        }
-
-        async function saveToken() {
-            const token = await requestToken();
-            if (token.status === 400) {
-                //handle error
-            }
-            else {
-                token.data.refresh_token = refreshToken;
-                localStorage.setItem("token", JSON.stringify(token.data));
-            }
-        }
-        saveToken();
-
-    }
-
-    static refreshIfExpired(token) {
-        const now = Date.now();
-        if (token.expires_at < now) {
-            Util.refreshToken();
-        }
-
-    }
-
-
 }
 
 

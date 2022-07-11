@@ -38,7 +38,6 @@
 
 
 <script>
-import { Util } from "../router/index";
 import axios from "axios";
 
 export default {
@@ -59,8 +58,9 @@ export default {
         this.enough = true;
         return;
       }
-      const token = JSON.parse(localStorage.getItem("token"));
-      Util.refreshIfExpired(token);
+
+    let token = localStorage.getItem("jwt");
+    token = token.substring(1, token.length);
 
       axios
         .post(
@@ -69,7 +69,7 @@ export default {
           {
             headers: {
               "Content-Type": "text/plain",
-              token: token.access_token,
+              jwt: token,
             },
           }
         )

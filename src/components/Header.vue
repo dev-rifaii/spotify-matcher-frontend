@@ -30,8 +30,7 @@ export default {
     tokenIsValid() {
       const now = Date.now();
       return (
-        localStorage.getItem("token") != null &&
-        JSON.parse(localStorage.getItem("token")).expires_at > now
+        localStorage.getItem("jwt") != null 
       );
     },
   },

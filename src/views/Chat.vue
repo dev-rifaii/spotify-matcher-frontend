@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="this.matches.length > 0">
     <div class="wrapper">
       <div class="content">
         <div v-for="match in matches" :key="match.id">
@@ -9,8 +9,7 @@
         </div>
       </div>
       <div class="chatbox">
-        <!-- <p>{{ current_recipient }}</p> -->
-        <div class="convo-container">
+        <div id="messages" class="convo-container">
           <div v-for="(message, index) in received_messages" :key="index">
             <div class="message sender" v-if="message.senderId == user.id">
               <img class="avatar" :src="user.image" />
@@ -37,12 +36,15 @@
       </div>
     </div>
   </div>
+
+  <h1 v-if="this.matches.length === 0">
+    Come back when you match with someone!
+  </h1>
 </template>
 
 <script>
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import { Util } from "../router/index";
 import axios from "axios";
 import Button from "@/components/Button.vue";
 
@@ -58,18 +60,20 @@ export default {
     };
   },
 
-  created() {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Util.refreshIfExpired(token);
-    this.getUser(token);
+  async created() {
+    let token = localStorage.getItem("jwt");
+    token = token.substring(1, token.length - 1);
+    await this.getUser(token);
+    await this.getMatches(token);
+    this.connect(token);
   },
 
   methods: {
     setCurrentRecipient(match) {
       this.current_recipient = match;
-      if (localStorage.getItem(this.getConvoId()) != null) {
+      if (localStorage.getItem(this.getCurrentConvoId()) != null) {
         this.received_messages = JSON.parse(
-          localStorage.getItem(this.getConvoId())
+          localStorage.getItem(this.getCurrentConvoId())
         );
       } else {
         this.received_messages = [];
@@ -81,15 +85,15 @@ export default {
         const res = await axios.get(
           `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/matches`,
           {
-            headers: { token: token.access_token },
+            headers: { jwt: token },
           }
         );
         this.matches = res.data;
         if (this.matches.length > 0) {
           this.current_recipient = res.data[0];
-          if (localStorage.getItem(this.getConvoId()) != null) {
+          if (localStorage.getItem(this.getCurrentConvoId()) != null) {
             this.received_messages = JSON.parse(
-              localStorage.getItem(this.getConvoId())
+              localStorage.getItem(this.getCurrentConvoId())
             );
           }
         }
@@ -104,12 +108,10 @@ export default {
         const res = await axios.get(
           `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/profile`,
           {
-            headers: { token: token.access_token },
+            headers: { jwt: token },
           }
         );
         this.user = res.data;
-        this.getMatches(token);
-        this.connect();
       } catch (e) {
         this.$router.push("error");
         console.error(e);
@@ -123,28 +125,32 @@ export default {
           recipientId: this.current_recipient.id,
           content: this.msg,
         };
+        this.stompClient.send("/app/private", JSON.stringify(msg), {});
         this.persistMessage(msg);
         this.received_messages.push(msg);
-        this.stompClient.send("/app/private", JSON.stringify(msg), {});
         this.msg = "";
+        this.scrollToEnd();
       }
     },
 
-    persistMessage(message) {
-      const convoId = this.getConvoId();
+    scrollToEnd() {
+      var container = this.$el.querySelector("#messages");
+      container.scrollTop = container.scrollHeight;
+    },
 
+    persistMessage(message) {
+      const convoId = this.calConvoId(message);
       if (localStorage.getItem(convoId) == null) {
         const convo = [message];
         localStorage.setItem(convoId, JSON.stringify(convo));
       } else {
         let convo = JSON.parse(localStorage.getItem(convoId));
-        console.log(convo);
         convo.push(message);
         localStorage.setItem(convoId, JSON.stringify(convo));
       }
     },
 
-    connect() {
+    connect(jwt) {
       this.socket = new SockJS(
         `${process.env.VUE_APP_CHAT_SERVER_ROOT_URL}/chat`
       );
@@ -153,12 +159,19 @@ export default {
       this.stompClient.connect(
         {},
         (frame) => {
-          this.connected = true;
-          this.stompClient.subscribe(`/user/${this.user.id}/dm`, (tick) => {
-            const message = JSON.parse(tick.body);
-            this.persistMessage(message);
-            this.received_messages.push(message);
-          });
+          this.stompClient.subscribe(
+            `/user/${this.user.id}/dm`,
+            (tick) => {
+              console.log("messag received" + tick.body);
+              const message = JSON.parse(tick.body);
+              this.persistMessage(message);
+              this.received_messages.push(message);
+              if (this.getCurrentConvoId() === this.calConvoId(message)) {
+                this.scrollToEnd();
+              }
+            },
+            { id: this.user.id, jwt: jwt }
+          );
         },
         (error) => {
           this.$router.push({
@@ -170,9 +183,15 @@ export default {
       );
     },
 
-    getConvoId() {
+    getCurrentConvoId() {
       return (
         this.hashCode(this.user.id) + this.hashCode(this.current_recipient.id)
+      );
+    },
+
+    calConvoId(message) {
+      return (
+        this.hashCode(message.senderId) + this.hashCode(message.recipientId)
       );
     },
 

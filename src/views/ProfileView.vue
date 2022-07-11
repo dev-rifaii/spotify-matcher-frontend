@@ -21,18 +21,18 @@ export default {
   },
 
   async created() {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Util.refreshIfExpired(token);
+    let token = localStorage.getItem("jwt");
+    token = token.substring(1, token.length);
     try {
       const res = await axios.get(
         `${process.env.VUE_APP_BACKEND_ROOT_URL}/spotifymatcher/users/profile`,
         {
-          headers: { token: token.access_token },
+          headers: { jwt: token },
         }
       );
       this.profile = res.data;
     } catch (e) {
-      this.$router.push('error');
+      this.$router.push("error");
       console.error(e);
     }
   },

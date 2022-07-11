@@ -4,6 +4,8 @@
     :style="{
       background: color,
       padding: size,
+      width:width,
+      height:height,
     }"
     class="btn customButton"
   >
@@ -19,6 +21,8 @@ export default {
     color: String,
     route: String,
     size: String,
+    width: String,
+    height:String,
   },
   methods: {
     onClick() {},
